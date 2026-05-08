@@ -16,8 +16,6 @@ function htmd_default_settings(): array
         'rate_limit_window_minutes' => 10,
         'rate_limit_max_jobs'     => 5,
         'concurrent_jobs_per_client' => 1,
-        'strip_page_numbers'      => 1,
-        'remove_page_headers'     => 1,
         'keep_footnotes'          => 1,
     );
 }

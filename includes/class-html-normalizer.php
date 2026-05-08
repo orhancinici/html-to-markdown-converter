@@ -20,28 +20,40 @@ class HTMD_HTML_Normalizer
         $html = preg_replace('#<script\b[^>]*>.*?</script>#is', '', $html);
         $html = preg_replace('#<style\b[^>]*>.*?</style>#is', '', $html);
 
-        if (! empty($options['remove_page_headers'])) {
-            $html = preg_replace('#<div\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bPageHead\b[^\'"]*[\'"][^>]*>.*?</div>#is', '', $html);
-        }
-
+        // PageHead bloğu (Şamile/Mektebe): tekrarlayan başlık (PartName) ve
+        // <hr>'i ayıkla, içinde PageNumber varsa onu sayfa işaretçisine çevir.
         $page_number_pattern = '#<span\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bPageNumber\b[^\'"]*[\'"][^>]*>(.*?)</span>#is';
 
-        if (! empty($options['strip_page_numbers'])) {
-            $html = preg_replace($page_number_pattern, '', $html);
-        } else {
-            $html = preg_replace_callback(
-                $page_number_pattern,
-                static function (array $matches): string {
-                    $text = trim((string) wp_strip_all_tags($matches[1]));
-                    $text = preg_replace('/^[\s(\[\{]+|[\s)\]\}]+$/u', '', (string) $text);
-                    if ($text === null || $text === '') {
-                        return '';
-                    }
-                    return "\n\n<div>--" . $text . "--</div>\n\n";
-                },
-                $html
-            );
-        }
+        $extract_page_marker = static function (string $raw): string {
+            $text = trim((string) wp_strip_all_tags($raw));
+            $text = preg_replace('/^[\s(\[\{]+|[\s)\]\}]+$/u', '', (string) $text);
+            if ($text === null || $text === '') {
+                return '';
+            }
+            return "\n\n<div>--" . $text . "--</div>\n\n";
+        };
+
+        $html = preg_replace_callback(
+            '#<div\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bPageHead\b[^\'"]*[\'"][^>]*>(.*?)</div>#is',
+            static function (array $matches) use ($page_number_pattern, $extract_page_marker): string {
+                if (preg_match($page_number_pattern, $matches[1], $inner)) {
+                    return $extract_page_marker($inner[1]);
+                }
+                return '';
+            },
+            $html
+        );
+
+        // PageHead dışında kalan bağımsız PageNumber/PartName span'leri.
+        $html = preg_replace_callback(
+            $page_number_pattern,
+            static function (array $matches) use ($extract_page_marker): string {
+                return $extract_page_marker($matches[1]);
+            },
+            $html
+        );
+
+        $html = preg_replace('#<span\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bPartName\b[^\'"]*[\'"][^>]*>.*?</span>#is', '', $html);
 
         if (empty($options['keep_footnotes'])) {
             $html = preg_replace('#<div\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bfootnote\b[^\'"]*[\'"][^>]*>.*?</div>#is', '', $html);

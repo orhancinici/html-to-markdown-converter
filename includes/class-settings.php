@@ -65,16 +65,6 @@ class HTMD_Settings
         add_settings_field('rate_limit_max_jobs', __('Hız limiti iş sayısı', 'html-to-markdown-converter'), array($this, 'render_number_field'), 'htmd-settings', 'htmd_general', array('key' => 'rate_limit_max_jobs', 'min' => 1, 'description' => __('Hız limiti penceresi içinde izin verilen maksimum dönüştürme isteği.', 'html-to-markdown-converter')));
         add_settings_field('concurrent_jobs_per_client', __('Eşzamanlı iş limiti', 'html-to-markdown-converter'), array($this, 'render_number_field'), 'htmd-settings', 'htmd_general', array('key' => 'concurrent_jobs_per_client', 'min' => 1, 'description' => __('Aynı kullanıcı veya IP için aynı anda izin verilen iş sayısı.', 'html-to-markdown-converter')));
 
-        add_settings_section(
-            'htmd_conversion',
-            __('Dönüştürme Kuralları', 'html-to-markdown-converter'),
-            '__return_false',
-            'htmd-settings'
-        );
-
-        add_settings_field('strip_page_numbers', __('Sayfa numaralarını kaldır', 'html-to-markdown-converter'), array($this, 'render_checkbox'), 'htmd-settings', 'htmd_conversion', array('key' => 'strip_page_numbers'));
-        add_settings_field('remove_page_headers', __('Tekrarlayan sayfa başlıklarını kaldır', 'html-to-markdown-converter'), array($this, 'render_checkbox'), 'htmd-settings', 'htmd_conversion', array('key' => 'remove_page_headers'));
-        add_settings_field('keep_footnotes', __('Dipnotları koru', 'html-to-markdown-converter'), array($this, 'render_checkbox'), 'htmd-settings', 'htmd_conversion', array('key' => 'keep_footnotes'));
     }
 
     public function sanitize_settings(array $input): array
@@ -91,9 +81,6 @@ class HTMD_Settings
             'rate_limit_window_minutes' => max(1, min(1440, absint($input['rate_limit_window_minutes'] ?? $defaults['rate_limit_window_minutes']))),
             'rate_limit_max_jobs' => max(1, min(1000, absint($input['rate_limit_max_jobs'] ?? $defaults['rate_limit_max_jobs']))),
             'concurrent_jobs_per_client' => max(1, min(10, absint($input['concurrent_jobs_per_client'] ?? $defaults['concurrent_jobs_per_client']))),
-            'strip_page_numbers' => empty($input['strip_page_numbers']) ? 0 : 1,
-            'remove_page_headers' => empty($input['remove_page_headers']) ? 0 : 1,
-            'keep_footnotes' => empty($input['keep_footnotes']) ? 0 : 1,
         );
     }
 
