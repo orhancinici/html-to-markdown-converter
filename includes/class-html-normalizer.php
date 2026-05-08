@@ -21,17 +21,19 @@ class HTMD_HTML_Normalizer
         $html = preg_replace('#<style\b[^>]*>.*?</style>#is', '', $html);
 
         if (! empty($options['remove_page_headers'])) {
-            $html = preg_replace('#<div class=[\'"]PageHead[\'"][^>]*>.*?</div>#is', '', $html);
+            $html = preg_replace('#<div\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bPageHead\b[^\'"]*[\'"][^>]*>.*?</div>#is', '', $html);
         }
 
+        $page_number_pattern = '#<span\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bPageNumber\b[^\'"]*[\'"][^>]*>(.*?)</span>#is';
+
         if (! empty($options['strip_page_numbers'])) {
-            $html = preg_replace('#<span class=[\'"]PageNumber[\'"][^>]*>.*?</span>#is', '', $html);
+            $html = preg_replace($page_number_pattern, '', $html);
         } else {
             $html = preg_replace_callback(
-                '#<span class=[\'"]PageNumber[\'"][^>]*>(.*?)</span>#is',
+                $page_number_pattern,
                 static function (array $matches): string {
                     $text = trim((string) wp_strip_all_tags($matches[1]));
-                    $text = preg_replace('/^[\s(\[\{]+|[\s)\]\}]+$/u', '', $text);
+                    $text = preg_replace('/^[\s(\[\{]+|[\s)\]\}]+$/u', '', (string) $text);
                     if ($text === null || $text === '') {
                         return '';
                     }
@@ -42,8 +44,8 @@ class HTMD_HTML_Normalizer
         }
 
         if (empty($options['keep_footnotes'])) {
-            $html = preg_replace('#<div class=[\'"]footnote[\'"][^>]*>.*?</div>#is', '', $html);
-            $html = preg_replace('#<span class=[\'"]footnote[\'"][^>]*>.*?</span>#is', '', $html);
+            $html = preg_replace('#<div\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bfootnote\b[^\'"]*[\'"][^>]*>.*?</div>#is', '', $html);
+            $html = preg_replace('#<span\b[^>]*\bclass\s*=\s*[\'"][^\'"]*\bfootnote\b[^\'"]*[\'"][^>]*>.*?</span>#is', '', $html);
             // Metin içindeki dipnot işaretçileri: <sup>(1)</sup> veya
             // <sup><font color="#be0000">(1)</font></sup> gibi yalnızca
             // sayı içeren üst simgeleri kaldır. Düz metindeki "(859)" gibi
