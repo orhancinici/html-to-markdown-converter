@@ -1,5 +1,5 @@
 === HTML to Markdown Converter ===
-Contributors: codex
+Contributors: orhancinici
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4

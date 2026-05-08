@@ -1,10 +1,11 @@
 <?php
 /**
  * Plugin Name: HTML to Markdown Converter
- * Plugin URI:  https://example.com/
+ * Plugin URI:  https://github.com/orhancinici/html-to-markdown-converter
  * Description: Converts uploaded HTML and HTM files to Markdown and packages the output for download.
  * Version:     0.2.0
- * Author:      Codex
+ * Author:      Orhan Çinici
+ * Author URI:  https://github.com/orhancinici
  * Text Domain: html-to-markdown-converter
  */
 

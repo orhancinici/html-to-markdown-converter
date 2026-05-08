@@ -4,7 +4,10 @@
       "Bash(git init *)",
       "Bash(git remote *)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git -c user.email=orhancinicii@gmail.com -c user.name=orhancinici commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git -c user.email=\"orhancinicii@gmail.com\" -c user.name=\"orhancinici\" commit -am \"Update plugin author metadata to Orhan Çinici and GitHub URLs\")"
     ]
   }
 }
