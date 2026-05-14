@@ -20,6 +20,13 @@ class HTMD_Shortcode
 
     public function render(): string
     {
+        if (! is_user_logged_in()) {
+            nocache_headers();
+            if (! defined('DONOTCACHEPAGE')) {
+                define('DONOTCACHEPAGE', true);
+            }
+        }
+
         if (! htmd_user_can_access()) {
             return '<p>' . esc_html(htmd_get_access_denied_message()) . '</p>';
         }
